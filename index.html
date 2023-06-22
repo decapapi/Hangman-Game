@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Hangman</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.9.1/gsap.min.js"></script>
+  <link rel="stylesheet" href="assets/css/style.css">
+</head>
+
+<body>
+  <div class="display">
+    <div id="gallow" class="gallow">
+      <svg xmlns="http://www.w3.org/2000/svg" width="50%" height="100%"></svg>
+    </div>
+    <div id="hidden-word"></div>
+    <div id="wrong-letters">Wrong letters:</div>
+  </div>
+
+  <div class="controls">
+    <input type="text" name="input" id="input">
+    <div class="buttons">
+      <button type="button" id="check">Check</button>
+      <button type="button" id="hint">Hint</button>
+      <button type="button" id="reset">Restart</button>
+    </div>
+    <div class="game-config">
+      Language:
+      <select name="langauge" id="langauge">
+        <option value="en">English</option>
+        <option value="es">Spanish</option>
+        <option value="it">Italian</option>
+      </select>
+      Difficulty:
+      <select name="difficulty" id="difficulty">
+        <option value="easy">Easy</option>
+        <option selected value="medium">Medium</option>
+        <option value="hard">Hard</option>
+        <option value="expert">Expert</option>
+      </select>
+    </div>
+  </div>
+
+  <div class="footer">
+    <p>- Created by Pablo Gozálvez -</p>
+    <p>This project can work thanks to <a href="https://random-word-api.herokuapp.com/home">Random word API</a></p>
+  </div>
+  <script src="assets/js/game.js"></script>
+</body>
+
+</html>
