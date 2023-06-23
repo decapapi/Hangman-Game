@@ -56,77 +56,76 @@ function getRandomInt(min, max) {
 }
 
 function updateWrongLettersText() {
+    if (wrongLettersText === undefined) {
+      wrongLettersText = s.text(gallow.offsetWidth / 1.5, gallow.offsetHeight * 0.9, "Wrong letters:");
+      wrongLettersText.attr({
+        "font-size": gallow.offsetWidth / 45,
+        "font-family": "Quicksand, sans-serif",
+        "text-anchor": "start"
+      });
+    }
+  
     wrongLettersText.attr({
       text: "Wrong letters: " + wrongLetters.join(", ")
     });
-  }
-
-function drawGallow() {
-    const mastile = s.rect(gallow.offsetWidth / 3.5, gallow.offsetHeight * 0.3, gallow.offsetWidth / 50, gallow.offsetHeight * 0.6);
-    const base = s.rect(gallow.offsetWidth / 3.95, gallow.offsetHeight * 0.87, gallow.offsetHeight * 0.2, gallow.offsetWidth / 60);
-    const top = s.rect(gallow.offsetWidth / 3.5, gallow.offsetHeight * 0.29, gallow.offsetHeight * 0.3, gallow.offsetWidth / 60);
-    const support = s.line(gallow.offsetWidth / 2.7, gallow.offsetHeight * 0.31, gallow.offsetWidth / 3.45, gallow.offsetHeight * 0.5);
-    
-    support.attr({
-      'stroke-width': gallow.offsetWidth / 125,
-      stroke: 'black'
-    });
-  
-    wrongLettersText = s.text(gallow.offsetWidth / 1.5, gallow.offsetHeight * 0.9, "Wrong letters:");
-    wrongLettersText.attr({
-      "font-size": gallow.offsetWidth / 45,
-      "font-family": "Quicksand, sans-serif",
-      "text-anchor": "start"
-    });
-
-    // Append the elements to the SVG
-    s.append(mastile, base, top, support);
 }
 
 function startGame() {
-    drawGallow();
-
     if (localStorage.getItem('difficulty') !== null)
-        difficultySelector.value = localStorage.getItem('difficulty');
-
+      difficultySelector.value = localStorage.getItem('difficulty');
+  
     if (localStorage.getItem('language') !== null)
-        languageSelector.value = localStorage.getItem('language');
+      languageSelector.value = localStorage.getItem('language');
+  
+    updateWrongLettersText();
 
-    choosenWord = getRandomWord();
+    getRandomWord()
+        .then(word => {
+            updateGallow();
+        })
+        .catch(error => {
+            console.error(error);
+    });
 }
+  
 
 function getRandomWord() {
-    let word;
-    let wordLength;
-
-    switch (difficultySelector.value) {
+    return new Promise((resolve, reject) => {
+      let word;
+      let wordLength;
+  
+      switch (difficultySelector.value) {
         case 'easy':
-            wordLength = getRandomInt(3, 5);
-            break;
+          wordLength = getRandomInt(3, 5);
+          break;
         case 'medium':
-            wordLength = getRandomInt(6, 8);
-            break;
+          wordLength = getRandomInt(6, 8);
+          break;
         case 'hard':
-            wordLength = getRandomInt(9, 12);
-            break;
+          wordLength = getRandomInt(9, 12);
+          break;
         case 'expert':
-            wordLength = getRandomInt(13, 15);
-            break;
+          wordLength = getRandomInt(13, 15);
+          break;
         default:
-            wordLength = getRandomInt(3, 15);
-            break;
-    }
-
-    fetch(`https://random-word-api.herokuapp.com/word?length=${Math.floor(wordLength)}&&lang=${languageSelector.value}`)
+          wordLength = getRandomInt(3, 15);
+          break;
+      }
+  
+      fetch(`https://random-word-api.herokuapp.com/word?length=${Math.floor(wordLength)}&&lang=${languageSelector.value}`)
         .then(response => response.json())
         .then(data => {
-        word = String(data);
-        hits += word.match(/\S+/g).length - 1;
-        word = normalizeLetters(word);
-        hiddenWord.innerText = hideWord(word);
-        choosenWord = word;
-        });
-}
+          word = String(data);
+          hits += word.match(/\S+/g).length - 1;
+          word = normalizeLetters(word);
+          hiddenWord.innerText = hideWord(word);
+          choosenWord = word;
+          resolve(word);
+        })
+        .catch(error => reject(error));
+    });
+  }
+  
 
 function restart() {
     if (confirm("This action will reset the game. Are you sure?")) {
@@ -138,7 +137,7 @@ function restart() {
         choosenWord = getRandomWord();
         hiddenWord.innerHTML = '';
         svg.innerHTML = '';
-        drawGallow();
+        updateGallow();
         difficultySelector.dataset.previousValue = difficultySelector.value;
         updateWrongLettersText();
     } else {
@@ -146,7 +145,20 @@ function restart() {
     }
 }
 
-function update() {
+function updateGallow() {
+    const mastile = s.rect(gallow.offsetWidth / 3.5, gallow.offsetHeight * 0.3, gallow.offsetWidth / 50, gallow.offsetHeight * 0.6);
+    const base = s.rect(gallow.offsetWidth / 3.95, gallow.offsetHeight * 0.87, gallow.offsetHeight * 0.2, gallow.offsetWidth / 60);
+    const top = s.rect(gallow.offsetWidth / 3.5, gallow.offsetHeight * 0.29, gallow.offsetHeight * 0.3, gallow.offsetWidth / 60);
+    const support = s.line(gallow.offsetWidth / 2.7, gallow.offsetHeight * 0.31, gallow.offsetWidth / 3.45, gallow.offsetHeight * 0.5);
+    
+    support.attr({
+      'stroke-width': gallow.offsetWidth / 125,
+      stroke: 'black'
+    });
+
+    // Append the elements to the SVG
+    s.append(mastile, base, top, support);
+
     if (timesFailed >= 7) {
         var text = s.text(gallow.offsetWidth / 2, gallow.offsetHeight * 0.17, "Game Over!");
         text.attr({
@@ -269,7 +281,7 @@ function checkInput() {
     }
   
     input.value = '';
-    update();
+    updateGallow();
 }
 
 function hint() {
@@ -310,6 +322,5 @@ difficultySelector.addEventListener('change', function() {
 
 window.addEventListener('resize', function() {
     svg.innerHTML = '';
-    drawGallow();
-    update();
+    updateGallow();
 });
