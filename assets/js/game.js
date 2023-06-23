@@ -56,17 +56,16 @@ function getRandomInt(min, max) {
 }
 
 function updateWrongLettersText() {
-    if (wrongLettersText === undefined) {
-      wrongLettersText = s.text(gallow.offsetWidth / 1.5, gallow.offsetHeight * 0.9, "Wrong letters:");
-      wrongLettersText.attr({
-        "font-size": gallow.offsetWidth / 45,
-        "font-family": "Quicksand, sans-serif",
-        "text-anchor": "start"
-      });
+
+    if (wrongLettersText !== undefined) {
+        wrongLettersText.remove();
     }
-  
+
+    wrongLettersText = s.text(gallow.offsetWidth / 2, gallow.offsetHeight * 0.9, "Wrong letters: " + wrongLetters.join(", "));
     wrongLettersText.attr({
-      text: "Wrong letters: " + wrongLetters.join(", ")
+      "font-size": Math.max(gallow.offsetWidth / 45, 8),
+      "font-family": "Quicksand, sans-serif",
+      "text-anchor": "start"
     });
 }
 
@@ -168,6 +167,15 @@ function updateGallow() {
             "fill": "red",
             "text-anchor": "middle"
         });
+
+        var leftLeg = s.line(gallow.offsetWidth / 2.52, gallow.offsetHeight * 0.56, gallow.offsetWidth / 2.36, gallow.offsetHeight * 0.64);
+        leftLeg.attr({
+            "stroke-width": gallow.offsetWidth / 125,
+            "stroke": "black"
+        });
+        leftLeg.addClass("left-leg");
+
+        hiddenWord.innerText = choosenWord;
     }
     
     if (hits === choosenWord.length) {
@@ -231,14 +239,6 @@ function updateGallow() {
         rightLeg.addClass("right-leg");
     }
 
-    if (timesFailed >= 7) {
-        var leftLeg = s.line(gallow.offsetWidth / 2.52, gallow.offsetHeight * 0.56, gallow.offsetWidth / 2.36, gallow.offsetHeight * 0.64);
-        leftLeg.attr({
-            "stroke-width": gallow.offsetWidth / 125,
-            "stroke": "black"
-        });
-        leftLeg.addClass("left-leg");
-    }
 }
 
 function checkInput() {
@@ -316,11 +316,12 @@ languageSelector.addEventListener('change', function() {
 });
 
 difficultySelector.addEventListener('change', function() {
-  localStorage.setItem('difficulty', difficultySelector.value);
-  restart();
+    localStorage.setItem('difficulty', difficultySelector.value);
+    restart();
 });
 
 window.addEventListener('resize', function() {
     svg.innerHTML = '';
     updateGallow();
+    updateWrongLettersText();
 });
