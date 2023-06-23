@@ -11,7 +11,7 @@ const resetButton = document.getElementById('reset');
 
 const gallow = document.getElementById("gallow");
 const svg = document.querySelector("svg");
-const svgns = "http://www.w3.org/2000/svg";
+const s = Snap(svg);
 const windowWidth = window.innerWidth;
 
 document.getElementById('check').addEventListener('click', checkInput);
@@ -54,31 +54,19 @@ function getRandomInt(min, max) {
 }
 
 function drawGallow() {
-    let mastile = document.createElementNS(svgns, "rect");
-    let base = document.createElementNS(svgns, "rect");
-    let top = document.createElementNS(svgns, "rect");
-    let support = document.createElementNS(svgns, "line");
 
-    gsap.set(mastile, {
-        attr: { x: gallow.offsetWidth / 3.5, y: gallow.offsetHeight * 0.3, width: gallow.offsetWidth / 50, height: gallow.offsetHeight * 0.6 }
+    const mastile = s.rect(gallow.offsetWidth / 3.5, gallow.offsetHeight * 0.3, gallow.offsetWidth / 50, gallow.offsetHeight * 0.6);
+    const base = s.rect(gallow.offsetWidth / 3.95, gallow.offsetHeight * 0.87, gallow.offsetHeight * 0.2, gallow.offsetWidth / 60);
+    const top = s.rect(gallow.offsetWidth / 3.5, gallow.offsetHeight * 0.29, gallow.offsetHeight * 0.3, gallow.offsetWidth / 60);
+    const support = s.line(gallow.offsetWidth / 2.7, gallow.offsetHeight * 0.31, gallow.offsetWidth / 3.45, gallow.offsetHeight * 0.5);
+    
+    support.attr({
+      'stroke-width': gallow.offsetWidth / 125,
+      stroke: 'black'
     });
-
-    gsap.set(base, {
-        attr: { x: gallow.offsetWidth / 3.93, y: gallow.offsetHeight * 0.87, width: gallow.offsetHeight * 0.2, height: gallow.offsetWidth / 60 }
-    });
-
-    gsap.set(top, {
-        attr: { x: gallow.offsetWidth / 3.5, y: gallow.offsetHeight * 0.29, width: gallow.offsetHeight * 0.3, height: gallow.offsetWidth / 60 }
-    });
-
-    gsap.set(support, {
-        attr: { x1: gallow.offsetWidth / 2.7, y1: gallow.offsetHeight * 0.31, x2: gallow.offsetWidth / 3.45, y2: gallow.offsetHeight * 0.5, 'stroke-width': gallow.offsetWidth / 125, stroke: 'black' }
-    });
-
-    svg.appendChild(mastile);
-    svg.appendChild(base);
-    svg.appendChild(top);
-    svg.appendChild(support);
+  
+    // Append the elements to the SVG
+    s.append(mastile, base, top, support);
 }
 
 function startGame() {
@@ -142,59 +130,62 @@ function update() {
     }
 
     if (timesFailed >= 1) {
-        let rope = document.createElementNS(svgns, "rect");
-        gsap.set(rope, {
-        attr: { x: gallow.offsetWidth / 2.55, y: gallow.offsetHeight * 0.3, width: gallow.offsetWidth / 110, height: gallow.offsetHeight * 0.08 }
+        var rope = s.rect(gallow.offsetWidth / 2.55, gallow.offsetHeight * 0.3, gallow.offsetWidth / 120, gallow.offsetHeight * 0.08);
+        rope.attr({
+            "stroke": "black"
         });
-        svg.appendChild(rope);
+        rope.addClass("rope");
     }
 
     if (timesFailed >= 2) {
-        let head = document.createElementNS(svgns, "circle");
-        gsap.set(head, {
-        cx: gallow.offsetWidth / 2.525, cy: gallow.offsetHeight * 0.425, r: gallow.offsetWidth / 50, stroke: 'black', strokeWidth: gallow.offsetHeight * 0.015, fill: 'none'
+        var head = s.circle(gallow.offsetWidth / 2.525, gallow.offsetHeight * 0.425, gallow.offsetWidth / 50);
+        head.attr({
+            "stroke": "black",
+            "stroke-width": gallow.offsetHeight * 0.015,
+            "fill": "none"
         });
-        svg.appendChild(head);
+        head.addClass("head");
     }
 
     if (timesFailed >= 3) {
-        let body = document.createElementNS(svgns, "rect");
-        gsap.set(body, {
-        attr: { x: gallow.offsetWidth / 2.55, y: gallow.offsetHeight * 0.47, width: gallow.offsetWidth / 110, height: gallow.offsetHeight * 0.1 }
-        });
-        svg.appendChild(body);
+        var body = s.rect(gallow.offsetWidth / 2.55, gallow.offsetHeight * 0.47, gallow.offsetWidth / 110, gallow.offsetHeight * 0.1);
+        body.addClass("body");
     }
 
     if (timesFailed >= 4) {
-        let leftArm = document.createElementNS(svgns, "line");
-        gsap.set(leftArm, {
-        attr: { x1: gallow.offsetWidth / 2.55, y1: gallow.offsetHeight * 0.48, x2: gallow.offsetWidth / 2.7, y2: gallow.offsetHeight * 0.54, 'stroke-width': gallow.offsetWidth / 125, stroke: 'black' }
+        var leftArm = s.line(gallow.offsetWidth / 2.55, gallow.offsetHeight * 0.48, gallow.offsetWidth / 2.7, gallow.offsetHeight * 0.54);
+        leftArm.attr({
+            "stroke-width": gallow.offsetWidth / 125,
+            "stroke": "black"
         });
-        svg.appendChild(leftArm);
+        leftArm.addClass("left-arm");
     }
 
     if (timesFailed >= 5) {
-        let rightArm = document.createElementNS(svgns, "line");
-        gsap.set(rightArm, {
-        attr: { x1: gallow.offsetWidth / 2.51, y1: gallow.offsetHeight * 0.48, x2: gallow.offsetWidth / 2.36, y2: gallow.offsetHeight * 0.54, 'stroke-width': gallow.offsetWidth / 125, stroke: 'black' }
+        var rightArm = s.line(gallow.offsetWidth / 2.51, gallow.offsetHeight * 0.48, gallow.offsetWidth / 2.36, gallow.offsetHeight * 0.54);
+        rightArm.attr({
+            "stroke-width": gallow.offsetWidth / 125,
+            "stroke": "black"
         });
-        svg.appendChild(rightArm);
+        rightArm.addClass("right-arm");
     }
 
     if (timesFailed >= 6) {
-        let rightLeg = document.createElementNS(svgns, "line");
-        gsap.set(rightLeg, {
-        attr: { x1: gallow.offsetWidth / 2.52, y1: gallow.offsetHeight * 0.56, x2: gallow.offsetWidth / 2.7, y2: gallow.offsetHeight * 0.64, 'stroke-width': gallow.offsetWidth / 125, stroke: 'black' }
+        var rightLeg = s.line(gallow.offsetWidth / 2.52, gallow.offsetHeight * 0.56, gallow.offsetWidth / 2.7, gallow.offsetHeight * 0.64);
+        rightLeg.attr({
+            "stroke-width": gallow.offsetWidth / 125,
+            "stroke": "black"
         });
-        svg.appendChild(rightLeg);
+        rightLeg.addClass("right-leg");
     }
 
     if (timesFailed >= 7) {
-        let leftLeg = document.createElementNS(svgns, "line");
-        gsap.set(leftLeg, {
-        attr: { x1: gallow.offsetWidth / 2.52, y1: gallow.offsetHeight * 0.56, x2: gallow.offsetWidth / 2.36, y2: gallow.offsetHeight * 0.64, 'stroke-width': gallow.offsetWidth / 125, stroke: 'black' }
+        var leftLeg = s.line(gallow.offsetWidth / 2.52, gallow.offsetHeight * 0.56, gallow.offsetWidth / 2.36, gallow.offsetHeight * 0.64);
+        leftLeg.attr({
+            "stroke-width": gallow.offsetWidth / 125,
+            "stroke": "black"
         });
-        svg.appendChild(leftLeg);
+        leftLeg.addClass("left-leg");
     }
 }
 
