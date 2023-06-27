@@ -122,6 +122,69 @@ svg {
   margin-bottom: 10px;
 }
 
+.alert-container {
+  position: fixed;
+  top: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  flex-direction: column-reverse;
+  align-items: center;
+  overflow: hidden;
+}
+
+.alert {
+  position: relative;
+  margin-top: 5px;
+  border-radius: 6px;
+  background-color: #606437;
+  color: #e5ec8a;
+  box-shadow: 0 1px 10px rgba(0, 0, 0, 0.1);
+  opacity: 0;
+  transform: translateY(-100%);
+  transition: opacity 0.5s, transform 0.5s, margin 0.5s;
+}
+
+.alert.show {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.alert_icon {
+  height: 22px;
+  width: 22px;
+  margin-right: 10px;
+}
+
+.alert_body {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  padding: 10px 15px;
+  margin-top: 5px;
+}
+
+.alert_animation {
+  position: absolute;
+  left: 4px;
+  top: 4px; /* Changed from bottom */
+  width: calc(100% - 8px);
+  height: 3px;
+  transform: scaleX(0);
+  transform-origin: left;
+  background: linear-gradient(to right, #6d6c3c, #ecea8a);
+  animation: alert_anim 2.5s 0.3s linear forwards;
+}
+
+@keyframes alert_anim {
+  0% {
+    transform: scaleX(0);
+  }
+  100% {
+    transform: scaleX(1);
+  }
+}
+
 #hidden-word {
   font-weight: bold;
   text-transform: capitalize;

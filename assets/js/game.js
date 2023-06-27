@@ -139,8 +139,9 @@ function restart() {
         updateGallow();
         difficultySelector.dataset.previousValue = difficultySelector.value;
         updateWrongLettersText();
+        createAlert('Game has been restarted!');
     } else {
-        difficultySelector.value = difficultySelector.dataset.previousValue == null ? "medium" : difficultySelector.dataset.previousValue;
+        difficultySelector.value = difficultySelector.dataset.previousValue === null ? "medium" : difficultySelector.dataset.previousValue;
     }
 }
 
@@ -242,24 +243,24 @@ function updateGallow() {
 }
 
 function checkInput() {
-    if (choosenWord == null || choosenWord == undefined ||
-        timesFailed >= 7 || hits == choosenWord.length)
+    if (choosenWord === null || choosenWord === undefined ||
+        timesFailed >= 7 || hits === choosenWord.length)
         return;
 
     var userInput = input.value.toLowerCase();;
 
     if (userInput.length != 1) {
-        alert('You must enter one letter each time!');
+        createAlert('You must enter one letter each time!');
         return;
     }
   
     if (hasNumbers(userInput)) {
-        alert("You can't use numbers!");
+        createAlert("You can't use numbers!");
         return;
     }
 
     if (usedLetters.includes(userInput.toLowerCase())) {
-        alert('That letter has already been used!');
+        createAlert('That letter has already been used!');
         return;
     } else {
         usedLetters.push(userInput.toLowerCase());
@@ -267,7 +268,7 @@ function checkInput() {
   
     let correct = false;
     for (let i = 0; i <= choosenWord.length; i++) {
-        if (choosenWord.toLowerCase()[i] == userInput.toLowerCase()) {
+        if (choosenWord.toLowerCase()[i] === userInput.toLowerCase()) {
             hiddenWord.innerText = replaceChar(hiddenWord.innerText, i, userInput.toLowerCase());
             correct = true;
             hits++;
@@ -286,20 +287,20 @@ function checkInput() {
 
 function hint() {
     if (hints <= 0) {
-        alert("You don't have any hints left!");
+        createAlert("You don't have any hints left!");
         return;
     }
 
-    var hintLetter;
-    var trys = 0;
-    var ready = false;
+    let hintLetter;
+    let trys = 0;
+    let ready = false;
 
     while (!ready) {
         if (trys >= choosenWord.length)
         return;
 
         hintLetter = getRandomInt(0, choosenWord.length - 1);
-        if (hiddenWord.innerText[hintLetter] == '_') {
+        if (hiddenWord.innerText[hintLetter] === '_') {
         ready = true;
         hiddenWord.innerText = replaceChar(hiddenWord.innerText, hintLetter, choosenWord[hintLetter]);
         hits++;
@@ -310,14 +311,63 @@ function hint() {
     hints--;
 }
 
+function createAlert(message) {
+    const maxVisibleAlerts = 5;
+    const alertContainerElement = document.getElementById('alertContainer');
+    const alertElements = alertContainerElement.getElementsByClassName('alert');
+  
+    if (alertElements.length >= maxVisibleAlerts) {
+      alertElements[alertElements.length - 1].remove();
+    }
+  
+    const alertContainer = document.createElement('figure');
+    alertContainer.classList.add('alert');
+  
+    const alertBody = document.createElement('div');
+    alertBody.classList.add('alert_body');
+  
+    const alertIcon = document.createElement('img');
+    alertIcon.src = 'assets/icons/alert.png';
+    alertIcon.title = 'Alert';
+    alertIcon.alt = 'Alert';
+    alertIcon.classList.add('alert_icon');
+  
+    const alertMessage = document.createTextNode(message);
+  
+    alertBody.appendChild(alertIcon);
+    alertBody.appendChild(alertMessage);
+  
+    const alertAnimation = document.createElement('div');
+    alertAnimation.classList.add('alert_animation');
+  
+    alertContainer.appendChild(alertBody);
+    alertContainer.appendChild(alertAnimation);
+  
+    alertContainerElement.insertBefore(alertContainer, alertContainerElement.firstChild);
+  
+    // Triggering the animation
+    setTimeout(function () {
+      alertContainer.classList.add('show');
+    }, 100);
+  
+    setTimeout(function () {
+      alertContainer.classList.remove('show');
+      setTimeout(function () {
+        alertContainer.remove();
+      }, 500);
+    }, 3000);
+}
+
 languageSelector.addEventListener('change', function() {
     localStorage.setItem('language', languageSelector.value);
     restart();
+    createAlert('Game language has been changed to '+ languageSelector.options[languageSelector.selectedIndex].text);
 });
 
 difficultySelector.addEventListener('change', function() {
     localStorage.setItem('difficulty', difficultySelector.value);
     restart();
+    createAlert('Game difficulty has been changed to '+ difficultySelector.options[difficultySelector.selectedIndex].text);
 });
 
 window.addEventListener('resize', function() {
