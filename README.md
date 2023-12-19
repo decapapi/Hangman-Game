@@ -13,7 +13,7 @@ Hangman Game is a classic word-guessing game implemented as a web application. T
 
 ### Demo
 
-A live demo of the game can be accessed at https://hangman-game.pablogr.repl.co/.
+A live demo of the game can be accessed at [https://hangman-game.pablogr.repl.co/](https://decapapi.github.io/Hangman-Game/).
 
 ### Features:
 
